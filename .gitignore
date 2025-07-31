@@ -1,0 +1,20 @@
+# Node.js dependencies
+node_modules/
+
+# Build- og distributionsmapper
+dist/
+build/
+
+# Miljøfiler
+.env
+
+# Logfiler og caches
+logs/
+.cache/
+
+# Systemfiler
+.DS_Store
+Thumbs.db
+
+# Editor- og IDE-mapper
+.vscode/
