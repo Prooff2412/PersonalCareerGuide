@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="da">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Karriere Kompasset</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <style>
+      /* Basis styling for loading og fejlmeddelelser */
+      .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      }
+      .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #FF8A65;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+      }
+      .error-message {
+        display: none;
+        text-align: center;
+        padding: 1rem;
+        margin: 1rem;
+        max-width: 500px;
+        background-color: #fff3f0;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+      .error-button {
+        background-color: #FF8A65;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 1rem;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      @keyframes fadeIn {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    
+    <!-- Fallback loading og fejlvisning -->
+    <div id="loading-fallback" class="loading-container">
+      <div class="loading-spinner"></div>
+      <h2>Indlæser Karriere Kompasset...</h2>
+      <div id="error-message" class="error-message">
+        <h3>Der opstod et problem</h3>
+        <p>Appen kunne ikke indlæses korrekt. Dette kan skyldes en langsom forbindelse eller et midlertidigt problem.</p>
+        <button class="error-button" onclick="window.location.reload()">Prøv igen</button>
+      </div>
+    </div>
+
+    <script>
+      // Forbedret fejlhåndtering
+      const loadingDebug = [];
+      
+      function logDebug(message) {
+        console.log(message);
+        loadingDebug.push({ time: new Date().toISOString(), message });
+        const errorElement = document.getElementById('error-message');
+        if (errorElement) {
+          const debugInfo = document.createElement('div');
+          debugInfo.style.fontSize = '12px';
+          debugInfo.style.marginTop = '20px';
+          debugInfo.style.textAlign = 'left';
+          debugInfo.style.backgroundColor = '#f5f5f5';
+          debugInfo.style.padding = '10px';
+          debugInfo.style.borderRadius = '4px';
+          debugInfo.style.maxHeight = '150px';
+          debugInfo.style.overflowY = 'auto';
+          debugInfo.innerHTML = "<strong>Debug Info:</strong><br>" + 
+            loadingDebug.map(d => `${d.time.split('T')[1].split('.')[0]} - ${d.message}`).join('<br>');
+          
+          // Fjern enhver eksisterende debugInfo
+          const existingDebug = errorElement.querySelector('[data-debug-info]');
+          if (existingDebug) {
+            errorElement.removeChild(existingDebug);
+          }
+          
+          debugInfo.setAttribute('data-debug-info', 'true');
+          errorElement.appendChild(debugInfo);
+        }
+      }
+      
+      // Vis fejlmeddelelse efter 6 sekunder hvis appen ikke er indlæst
+      const errorTimeout = setTimeout(() => {
+        logDebug('Timeout: App ikke indlæst efter 6 sekunder');
+        const loadingElement = document.getElementById('loading-fallback');
+        const errorElement = document.getElementById('error-message');
+        if (loadingElement && errorElement) {
+          errorElement.style.display = 'block';
+          errorElement.style.animation = 'fadeIn 0.5s';
+        }
+      }, 6000);
+      
+      // Fejlhåndtering
+      window.addEventListener('error', function(event) {
+        logDebug(`Fejl: ${event.message} (${event.filename}:${event.lineno})`);
+      });
+      
+      // Fjern loading-skærm når appen er indlæst
+      document.addEventListener('DOMContentLoaded', () => {
+        logDebug('DOM indlæst');
+      });
+      
+      window.addEventListener('load', () => {
+        logDebug('Side indlæst');
+        
+        // Check root element
+        const rootElement = document.getElementById('root');
+        if (rootElement) {
+          logDebug(`Root element fundet: ${rootElement.children.length} børn`);
+        } else {
+          logDebug('Advarsel: Root element ikke fundet');
+        }
+        
+        // Check loading timeout
+        setTimeout(() => {
+          const loadingElement = document.getElementById('loading-fallback');
+          if (loadingElement && document.getElementById('root').children.length > 0) {
+            logDebug('React app indlæst korrekt, fjerner loading skærm');
+            loadingElement.style.display = 'none';
+            clearTimeout(errorTimeout);
+          } else {
+            logDebug('React app muligvis ikke indlæst korrekt');
+          }
+        }, 500); // Giv React lidt tid til at rendere
+      });
+      
+      // Check React app indlæsning
+      window.addEventListener('app-loaded', () => {
+        logDebug('React app-loaded event modtaget');
+        const loadingElement = document.getElementById('loading-fallback');
+        if (loadingElement) {
+          loadingElement.style.display = 'none';
+          clearTimeout(errorTimeout);
+        }
+      });
+    </script>
+    
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

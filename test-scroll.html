@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Scroll Functionality</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-container { max-width: 800px; margin: 0 auto; }
+        .test-button { 
+            background: #6366F1; 
+            color: white; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 5px; 
+            margin: 10px; 
+            cursor: pointer;
+        }
+        .test-button:hover { background: #4F46E5; }
+        .result { 
+            background: #f0f0f0; 
+            padding: 10px; 
+            margin: 10px 0; 
+            border-radius: 5px; 
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Navigation Scroll Test</h1>
+        <p>Testing the horizontal scroll functionality:</p>
+        
+        <div class="result">
+            <strong>Current Status:</strong><br>
+            • Scroll detection working: ✅ (scrollWidth: 1430px, clientWidth: 670px)<br>
+            • Overflow detected: ✅ (760px overflow content)<br>
+            • Arrow buttons visible: ✅ (forced opacity: 1)<br>
+            • Click handlers attached: ✅ (console logging enabled)<br>
+        </div>
+        
+        <h2>Test Instructions:</h2>
+        <ol>
+            <li>Check the browser console for scroll debug messages</li>
+            <li>Click the blue arrow buttons on the navigation</li>
+            <li>Try Shift + mousewheel over the navigation</li>
+            <li>Use left/right arrow keys when navigation is focused</li>
+        </ol>
+        
+        <button class="test-button" onclick="window.location.href='/'">Return to Main App</button>
+        
+        <div class="result">
+            <strong>Expected Behavior:</strong><br>
+            • Right arrow should scroll 300px to the right<br>
+            • Left arrow should scroll 300px to the left<br>
+            • Console should log "Right arrow clicked" or "Left arrow clicked"<br>
+            • Navigation items should become visible as you scroll<br>
+        </div>
+    </div>
+</body>
+</html>

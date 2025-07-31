@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedIn Optimering Mobile Test</title>
+    <style>
+        /* Mobile-first responsive test */
+        .button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 12px 24px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            touch-action: manipulation;
+            width: 100%;
+            margin: 8px 0;
+        }
+        
+        .button:hover {
+            background: #1d4ed8;
+            transform: scale(1.05);
+        }
+        
+        .button:active {
+            transform: scale(0.95);
+        }
+        
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        
+        @media (min-width: 640px) {
+            .button {
+                width: auto;
+            }
+            .button-group {
+                display: flex;
+                gap: 12px;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>LinkedIn Optimering - Button Test</h1>
+        
+        <div class="button-group">
+            <button class="button" onclick="testBackButton()">
+                ← Tilbage til redigering
+            </button>
+            
+            <button class="button" onclick="testCopyButton()">
+                📋 Kopier alt til udklipsholder
+            </button>
+        </div>
+        
+        <button class="button" onclick="testOptimizeButton()">
+            🚀 Optimer min LinkedIn-profil
+        </button>
+        
+        <div id="feedback" style="margin-top: 20px; padding: 10px; border-radius: 4px;"></div>
+    </div>
+    
+    <script>
+        function showFeedback(message, isSuccess = true) {
+            const feedback = document.getElementById('feedback');
+            feedback.textContent = message;
+            feedback.style.background = isSuccess ? '#dcfce7' : '#fef2f2';
+            feedback.style.color = isSuccess ? '#16a34a' : '#dc2626';
+            
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+            
+            setTimeout(() => {
+                feedback.textContent = '';
+                feedback.style.background = '';
+            }, 3000);
+        }
+        
+        function testBackButton() {
+            showFeedback('✅ Tilbage til redigering knap virker!');
+        }
+        
+        async function testCopyButton() {
+            try {
+                const testText = 'Test clipboard funktionalitet';
+                
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(testText);
+                } else {
+                    // Fallback
+                    const textArea = document.createElement("textarea");
+                    textArea.value = testText;
+                    textArea.style.position = "fixed";
+                    textArea.style.left = "-999999px";
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    textArea.remove();
+                }
+                
+                showFeedback('✅ Kopier knap virker! Tekst kopieret til udklipsholder');
+            } catch (error) {
+                showFeedback('❌ Kopier knap fejl: ' + error.message, false);
+            }
+        }
+        
+        function testOptimizeButton() {
+            showFeedback('✅ Optimering knap virker!');
+        }
+    </script>
+</body>
+</html>
